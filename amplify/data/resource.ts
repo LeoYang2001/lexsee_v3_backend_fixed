@@ -40,7 +40,7 @@ export const Word = a
   .authorization((allow) => [allow.owner()]);
 
 const schema = a.schema({
-  UserList,
+  UserProfile,
   WordsList,
   Word,
 });

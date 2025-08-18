@@ -1,38 +1,40 @@
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
-// UserList is the new top-level model that organizes all of a user's word lists.
+// UserList remains the central point for a user's data.
 export const UserList = a
   .model({
-    // This will be the unique ID for each user's central list.
+    // The userId links this record to the authenticated user.
     userId: a.string().required(),
-    // The hasMany relationship connects this central list to the individual words lists.
-    wordsLists: a.hasMany("WordsList", "userListId"),
+    // This provides a single entry point to access a user's single WordsList.
+    wordsList: a.hasOne("WordsList", "userListId"),
   })
   .authorization((allow) => [
     // This rule ensures a user can only access their own lists.
     allow.owner(),
   ]);
 
-// WordsList now belongs to a specific UserList.
+// WordsList now acts as the single container for all of a user's words.
 export const WordsList = a
   .model({
-    type: a.string().required(), // 'collected' or 'learned'
-    // This is the foreign key that links a WordsList to its parent UserList.
+    // The foreign key to link this list to its parent UserList.
     userListId: a.id(),
     // The belongsTo relationship defines the link back to the parent.
     userList: a.belongsTo("UserList", "userListId"),
-    // The original hasMany relationship to the Word model remains unchanged.
-    list: a.hasMany("Word", "wordsListId"),
+    // This provides a link to all the Word records belonging to this list.
+    words: a.hasMany("Word", "wordsListId"),
   })
   .authorization((allow) => [allow.owner()]);
 
-// The Word model remains largely the same, but it's crucial to correctly link it.
+// The Word model now includes a 'status' field.
 export const Word = a
   .model({
-    data: a.json().required(), // JSON data for the word
-    // This is the foreign key that links a Word to its parent WordsList.
+    // The data field stores the word's content.
+    data: a.json().required(),
+    // The new status field, which is an enum with predefined values.
+    status: a.enum(["COLLECTED", "LEARNED"]),
+    // The foreign key to link this word to its parent WordsList.
     wordsListId: a.id(),
-    // The belongsTo relationship defines the link back to the parent.
+    // The belongsTo relationship links the word to its WordsList container.
     wordsList: a.belongsTo("WordsList", "wordsListId"),
   })
   .authorization((allow) => [allow.owner()]);

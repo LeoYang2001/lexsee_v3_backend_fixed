@@ -1,7 +1,7 @@
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
 // UserList remains the central point for a user's data.
-export const UserList = a
+export const UserProfile = a
   .model({
     // The userId links this record to the authenticated user.
     userId: a.string().required(),

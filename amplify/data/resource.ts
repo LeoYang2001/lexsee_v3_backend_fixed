@@ -9,6 +9,7 @@ export const UserProfile = a
     username: a.string().required(),
     // A single wordsList belongs to each user profile.
     wordsList: a.hasOne("WordsList", "userProfileId"),
+    data: a.json(),
   })
   .authorization((allow) => [
     // This allows the owner to perform all operations on their profile.

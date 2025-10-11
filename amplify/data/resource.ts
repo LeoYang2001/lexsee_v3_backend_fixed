@@ -12,8 +12,8 @@ export const UserProfile = a
     schedule: a.json(),
   })
   .authorization((allow) => [
-    // Enable real-time subscriptions for the owner
-    allow.owner().to(["listen"]),
+    // This allows the owner to perform all operations on their profile.
+    allow.owner(),
   ]);
 
 // WordsList is now the single container for a user's words.

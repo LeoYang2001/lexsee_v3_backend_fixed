@@ -12,8 +12,6 @@ export const UserProfile = a
     schedule: a.json(),
   })
   .authorization((allow) => [
-    // This allows the owner to perform all operations on their profile.
-    allow.owner(),
     // Enable real-time subscriptions for the owner
     allow.owner().to(["listen"]),
   ]);

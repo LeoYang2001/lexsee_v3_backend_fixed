@@ -10,6 +10,7 @@ export const UserProfile = a
     // A single wordsList belongs to each user profile.
     wordsList: a.hasOne("WordsList", "userProfileId"),
     schedule: a.json(),
+    ifChineseUser: a.boolean().required(),
   })
   .authorization((allow) => [
     // This allows the owner to perform all operations on their profile.

@@ -81,6 +81,7 @@ function App() {
       const profileResult = await client.models.UserProfile.create({
         userId: uid,
         username: username.trim(),
+        ifChineseUser: false,
       });
 
       if (profileResult.data) {

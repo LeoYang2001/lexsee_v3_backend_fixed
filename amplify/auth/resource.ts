@@ -22,9 +22,9 @@ export const auth = defineAuth({
       logoutUrls: ["myapp://"],
     },
   },
-  userAttributes: {
-    email: {
-      required: false, // Make email optional for external providers (apple)
-    },
-  },
+  // userAttributes: {
+  //   email: {
+  //     required: false, // Make email optional for external providers (apple)
+  //   },
+  // },
 });

@@ -43,6 +43,7 @@ export const Word = a
     wordsListId: a.id(),
     // The belongsTo relationship links the word to its WordsList container.
     wordsList: a.belongsTo("WordsList", "wordsListId"),
+    scheduleWords: a.hasMany("ReviewScheduleWord", "wordId"),
   })
   .authorization((allow) => [allow.owner()]);
 

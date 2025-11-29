@@ -9,8 +9,11 @@ export const UserProfile = a
     username: a.string().required(),
     // A single wordsList belongs to each user profile.
     wordsList: a.hasOne("WordsList", "userProfileId"),
-    schedule: a.json(),
-    ifChineseUser: a.boolean().required(),
+
+    ifChineseUser: a.boolean(),
+
+    // All review schedules for this user (one per date).
+    reviewSchedules: a.hasMany("ReviewSchedule", "userProfileId"),
   })
   .authorization((allow) => [
     // This allows the owner to perform all operations on their profile.
@@ -43,10 +46,81 @@ export const Word = a
   })
   .authorization((allow) => [allow.owner()]);
 
+/**
+ * ReviewSchedule: one review session per user per date.
+ * Example: a row for (user, "2025-11-04") with its notification + summary stats.
+ */
+export const ReviewSchedule = a
+  .model({
+    // Owner of this schedule.
+    userProfileId: a.id().required(),
+    userProfile: a.belongsTo("UserProfile", "userProfileId"),
+
+    // e.g. "2025-11-04" – matches your previous JSON keys.
+    scheduleDate: a.string().required(),
+
+    // Expo local notification id for this day's reminder.
+    notificationId: a.string(),
+
+    // --- Schedule-level info (summary for that date) ---
+
+    // 0–100 success percentage for that session.
+    successRate: a.float(),
+
+    // Total number of words in this session.
+    totalWords: a.integer(),
+
+    // Count of words already reviewed.
+    reviewedCount: a.integer(),
+
+    // Count of words still to be reviewed.
+    toBeReviewedCount: a.integer(),
+
+    // Optional flexible blob if you want to store extra summary info.
+    // e.g. { averageScore: 4.2, averageTimePerCard: 3.1, ... }
+    scheduleInfo: a.json(),
+
+    // All words that belong to this schedule (per-word review entries).
+    scheduleWords: a.hasMany("ReviewScheduleWord", "reviewScheduleId"),
+  })
+  .authorization((allow) => [allow.owner()]);
+
+/**
+ * ReviewScheduleWord: one row per (schedule, word) with per-word review info.
+ * This replaces your old "reviewWordIds: []" array and lets you track status,
+ * score, attempts, etc., per word for that schedule.
+ */
+export const ReviewScheduleWord = a
+  .model({
+    // Parent schedule (user + date).
+    reviewScheduleId: a.id().required(),
+    reviewSchedule: a.belongsTo("ReviewSchedule", "reviewScheduleId"),
+
+    // Which word is being reviewed in this schedule.
+    wordId: a.id().required(),
+    word: a.belongsTo("Word", "wordId"),
+
+    // Whether this word is still pending or already reviewed for this session.
+    status: a.enum(["TO_REVIEW", "REVIEWED"]),
+
+    // Per-word review score, e.g. 0–5 based on how well they remembered it.
+    score: a.integer(),
+
+    // When this word was answered in this schedule (ISO string or datetime).
+    answeredAt: a.string(),
+
+    // Flexible metadata for detailed history if needed:
+    // e.g. { timeSpentSec: 3.5, userAnswer: "xxx", isCorrect: true }
+    meta: a.json(),
+  })
+  .authorization((allow) => [allow.owner()]);
+
 const schema = a.schema({
   UserProfile,
   WordsList,
   Word,
+  ReviewSchedule,
+  ReviewScheduleWord,
 });
 
 export type Schema = ClientSchema<typeof schema>;

@@ -14,6 +14,11 @@ export const UserProfile = a
 
     // All review schedules for this user (one per date).
     reviewSchedules: a.hasMany("ReviewSchedule", "userProfileId"),
+
+    // Link SearchHistory and BadgeList back to UserProfile so @belongsTo mappings resolve.
+    // These mirror the belongsTo('UserProfile', 'userProfileId') used in those models.
+    searchHistories: a.hasMany("SearchHistory", "userProfileId"),
+    badgeLists: a.hasMany("BadgeList", "userProfileId"),
   })
   .authorization((allow) => [
     // This allows the owner to perform all operations on their profile.

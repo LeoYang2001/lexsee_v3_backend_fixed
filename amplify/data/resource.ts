@@ -116,12 +116,34 @@ export const ReviewScheduleWord = a
   })
   .authorization((allow) => [allow.owner()]);
 
+// this searchHistory list is to track the most 10 recent searched words by the user
+export const SearchHistory = a
+  .model({
+    userProfileId: a.id().required(),
+    userProfile: a.belongsTo("UserProfile", "userProfileId"),
+    searchedWords: a.json(),
+  })
+  .authorization((allow) => [allow.owner()]);
+
+// this badge list is to track the badges earned by the user
+export const BadgeList = a
+  .model({
+    userProfileId: a.id().required(),
+    userProfile: a.belongsTo("UserProfile", "userProfileId"),
+    badges: a.json(),
+  })
+  .authorization((allow) => [allow.owner()]);
+
+// Define the overall schema including all models.
+
 const schema = a.schema({
   UserProfile,
   WordsList,
   Word,
   ReviewSchedule,
   ReviewScheduleWord,
+  SearchHistory,
+  BadgeList,
 });
 
 export type Schema = ClientSchema<typeof schema>;

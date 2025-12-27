@@ -180,6 +180,9 @@ export const GlobalAward = a
     activatedImageUrl: a.string().required(),
     deactivatedImageUrl: a.string().required(),
     gifAnimationUrl: a.string(),
+
+    // link back to per-user UserBadge records that reference this GlobalAward
+    userBadges: a.hasMany("UserBadge", "globalAwardId"),
   })
   .authorization((allow) => [
     allow.authenticated().to(["read"]),

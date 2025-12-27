@@ -163,6 +163,9 @@ export const GlobalAward = a
     awardId: a.string().required(), // e.g., "FAST_LEARNER"
     title: a.string().required(),
     description: a.string(),
+    activatedImageUrl: a.string().required(),
+    deactivatedImageUrl: a.string().required(),
+    gifAnimationUrl: a.string(),
   })
   .authorization((allow) => [
     allow.authenticated().to(["read"]),

@@ -18,6 +18,7 @@ export const UserProfile = a
     // Link SearchHistory and BadgeList back to UserProfile so @belongsTo mappings resolve.
     // These mirror the belongsTo('UserProfile', 'userProfileId') used in those models.
     searchHistories: a.hasMany("SearchHistory", "userProfileId"),
+    // fixed: track badge lists for this profile
     badgeLists: a.hasMany("BadgeList", "userProfileId"),
   })
   .authorization((allow) => [
@@ -143,6 +144,16 @@ export const UserBadge = a
 
     // When the user acquired the badge
     acquiredAt: a.string(),
+
+    // new: link back to a BadgeList entry (per-user container)
+    badgeListId: a.id(),
+    badgeList: a.belongsTo("BadgeList", "badgeListId"),
+
+    // Optional flag for whether the badge is active / visible
+    isActive: a.boolean().default(true),
+
+    // Optional per-user metadata (progress, counts, notes, etc.)
+    meta: a.json(),
   })
   .authorization((allow) => [allow.owner()]);
 
@@ -152,8 +163,8 @@ export const BadgeList = a
     userProfileId: a.id().required(),
     userProfile: a.belongsTo("UserProfile", "userProfileId"),
 
-    // Replace raw JSON with a proper relation to per-user UserBadge records
-    userBadges: a.hasMany("UserBadge", "userProfileId"),
+    // track per-user UserBadge records that belong to this BadgeList
+    userBadges: a.hasMany("UserBadge", "badgeListId"),
   })
   .authorization((allow) => [allow.owner()]);
 

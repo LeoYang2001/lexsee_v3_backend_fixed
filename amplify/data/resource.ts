@@ -20,6 +20,9 @@ export const UserProfile = a
     searchHistories: a.hasMany("SearchHistory", "userProfileId"),
     // fixed: track badge lists for this profile
     badgeLists: a.hasMany("BadgeList", "userProfileId"),
+
+    // Add per-user UserBadge relation so UserBadge.belongsTo(UserProfile, 'userProfileId') resolves
+    userBadges: a.hasMany("UserBadge", "userProfileId"),
   })
   .authorization((allow) => [
     // This allows the owner to perform all operations on their profile.
